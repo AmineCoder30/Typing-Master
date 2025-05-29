@@ -20,18 +20,31 @@ import { cn } from "@/lib/utils";
 
 export default function TypingTestPage() {
   const router = useRouter();
+  // The currently selected language code (e.g., "en", "fr")
   const [selectedLanguage, setSelectedLanguage] = useState("en");
+  // The text that the user needs to type
   const [currentText, setCurrentText] = useState("");
+  // The user's input as they type
   const [userInput, setUserInput] = useState("");
+  // Whether the typing test is currently active (started)
   const [isActive, setIsActive] = useState(false);
+  // The elapsed time in seconds since the test started
   const [timeElapsed, setTimeElapsed] = useState(0);
+  // The calculated words per minute (WPM) score
   const [wpm, setWpm] = useState(0);
+  // The current typing accuracy percentage
   const [accuracy, setAccuracy] = useState(100);
+  // The number of typing errors made by the user
   const [errors, setErrors] = useState(0);
+  // Whether the typing test has finished
   const [isFinished, setIsFinished] = useState(false);
+  // The current position (index) in the text being typed
   const [currentPosition, setCurrentPosition] = useState(0);
+  // Set of character indices currently being animated for feedback
   const [animatingChars, setAnimatingChars] = useState<Set<number>>(new Set());
+  // Array of characters that the user has typed so far
   const [typedChars, setTypedChars] = useState<string[]>([]);
+  // Ref to the textarea element for focusing
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const currentLanguageInfo =
@@ -99,7 +112,7 @@ export default function TypingTestPage() {
 
   const handleKeyPress = (key: string) => {
     if (isFinished) return;
-
+    console.log("userInput:", userInput);
     // Handle backspace key
     if (key === "Backspace") {
       if (userInput.length > 0) {
@@ -219,7 +232,6 @@ export default function TypingTestPage() {
     if (userInput.length >= currentText.length && !isFinished) {
       setIsFinished(true);
       setIsActive(false);
-      finishTest();
     }
   }, [userInput.length, currentText.length, isFinished]);
 
@@ -404,16 +416,6 @@ export default function TypingTestPage() {
         </CardContent>
       </Card>
 
-      {/* Virtual Keyboard */}
-      <Card className="transition-all duration-300 hover:shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Keyboard className="w-5 h-5" />
-            Virtual Keyboard
-          </CardTitle>
-        </CardHeader>
-      </Card>
-
       {/* Control Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Button
@@ -430,7 +432,7 @@ export default function TypingTestPage() {
           onClick={finishTest}
           size="lg"
           className="flex items-center gap-2 transition-all duration-300 hover:scale-105"
-          disabled={userInput.length === 0}
+          disabled={userInput.length < 50}
         >
           <Square className="w-4 h-4" />
           Finish Test
